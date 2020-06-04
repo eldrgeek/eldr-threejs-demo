@@ -1,12 +1,11 @@
 import React from "react";
 import "./styles.css";
-import Demo from "./threejsdemo";
+// import Demo from "./threejsdemo";
+import Demo1 from "./threejscube";
 export default function App() {
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <Demo />
-      <h2>Start editing to see some magic happen!</h2>
+      <Demo1 />
     </div>
   );
 }
