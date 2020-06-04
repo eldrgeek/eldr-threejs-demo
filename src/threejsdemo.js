@@ -35,9 +35,28 @@ export default () => {
     var geometry = new THREE.SphereBufferGeometry(500, 60, 40);
     // invert the geometry on the x-axis so that all of the faces point inward
     geometry.scale(-1, 1, 1);
+    var cubeloader = new THREE.CubeTextureLoader();
+    // loader.setPath( 'textures/cube/pisa/' );
+    cubeloader.setPath(
+      "https://threejs.org/examples/textures/cube/SwedishRoyalCastle/"
+    );
+
+    let files = [0, 1, 2, 3, 4, 5].map(n => `./3072_${n}.jpg`);
+    // let files = ["px,jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"];
+    console.log(files);
+    try {
+      console.log("func", cubeloader.load);
+      var textureCube = cubeloader.load(files);
+      console.log("texcube", textureCube);
+    } catch (e) {
+      console.log("loading error", e);
+    }
 
     var texture = new THREE.TextureLoader().load(
       "./sanders.png"
+      // "./" +files[3]
+      //https://threejs.org/examples/textures/cube/SwedishRoyalCastle/px.jpg
+      //https://github.com/mrdoob/three.js/blob/master/examples/webgl_materials_cubemap.html
       //https://threejs.org/docs/#api/en/textures/CubeTexture
       // "https://threejs.org/examples/textures/2294472375_24a3b8ef46_o.jpg"
     );
