@@ -44,10 +44,9 @@ export default () => {
     let files = [0, 1, 2, 3, 4, 5].map(n => `./3072_${n}.jpg`);
     // let files = ["px,jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"];
     console.log(files);
+    let textue;
     try {
-      console.log("func", cubeloader.load);
       var textureCube = cubeloader.load(files);
-      console.log("texcube", textureCube);
     } catch (e) {
       console.log("loading error", e);
     }
