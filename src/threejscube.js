@@ -113,20 +113,23 @@ export default () => {
             console.log("dot", historyIndex, history);
             break;
           case 37: // left arrow
-            if (historyIndex >= 0) {
-              console.log("left");
-              historyIndex--;
-              head3.applyMatrix4(history[historyIndex]);
-              render();
-            }
+            head3.position.y -= 10;
+            // if (historyIndex >= 0) {
+            //   console.log("left");
+            //   historyIndex--;
+            //   head3.matrix.y = (history[historyIndex].y);
+            //   render();
+            // }
             break;
           case 39: // right arrow
-            if (historyIndex < history.length) {
-              console.log("right");
+            //  head3.translateY(10)
+            head3.position.fromArray([900, -500, 700]);
+            // if (historyIndex < history.length) {
+            //   console.log("right");
 
-              head3.applyMatrix4(history[historyIndex]);
-              historyIndex++;
-            }
+            //   head3.applyMatrix4(history[historyIndex]);
+            //   historyIndex++;
+            // }
             break;
           default:
             break;
