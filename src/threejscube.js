@@ -3,8 +3,8 @@ import React from "react";
 import Character from "./characteranimation";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-// import { OrbitControls } from "./jsm/controls/OrbitControls.js";
-// import { OBJLoader } from "./jsm/loaders/OBJLoader.js";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+//https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_transform.html
 export default () => {
   var container, stats;
 
@@ -25,7 +25,7 @@ export default () => {
       1,
       5000
     );
-    camera.position.z = 2000;
+    camera.position.z = -100;
 
     //cubemap
     var path = "https://threejs.org/examples/textures/cube/SwedishRoyalCastle/";
@@ -58,7 +58,7 @@ export default () => {
 
     //materials
     var cubeMaterial3 = new THREE.MeshLambertMaterial({
-      color: 0xff6600,
+      color: 0x555555,
       envMap: reflectionCube,
       combine: THREE.MixOperation,
       reflectivity: 0.3
@@ -77,10 +77,11 @@ export default () => {
     var objLoader = new OBJLoader();
 
     objLoader.setPath("https://threejs.org/examples/models/obj/walt/");
+    var head3;
     objLoader.load("WaltHead.obj", function(object) {
       var head = object.children[0];
 
-      head.scale.multiplyScalar(15);
+      head.scale.multiplyScalar(5);
       head.position.y = -500;
       head.material = cubeMaterial1;
 
@@ -88,12 +89,32 @@ export default () => {
       head2.position.x = -900;
       head2.material = cubeMaterial2;
 
-      var head3 = head.clone();
+      head3 = head.clone();
       head3.position.x = 900;
       head3.material = cubeMaterial3;
       scene.add(head);
+      window.addEventListener("keydown", function(event) {
+        switch (event.keyCode) {
+          case 87: // W
+            control.setMode("translate");
+            break;
+          case 69: // E
+            control.setMode("rotate");
+            console.log("Rotate");
+            break;
+          case 82: // R
+            control.setMode("scale");
+            break;
+          default:
+            break;
+        }
+      });
+      scene.add(/* head, head2,*/ head3);
+      var control = new TransformControls(camera, renderer.domElement);
+      control.addEventListener("change", render);
 
-      scene.add(head, head2, head3);
+      control.attach(head3);
+      scene.add(control);
     });
 
     //renderer
