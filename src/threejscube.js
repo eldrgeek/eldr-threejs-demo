@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import Vimeo from "@vimeo/player"
 import React from "react";
 import Character from "./characteranimation";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -92,6 +93,15 @@ export default () => {
       head3 = head.clone();
       head3.position.x = 900;
       head3.material = cubeMaterial3;
+      var screenScaler = 10;
+      // var height = screenScaler * (vimeoPlayer.getHeight() / vimeoPlayer.getWidth())
+      
+      var height = 100
+      var geometry = new THREE.PlaneGeometry(screenScaler, height, 1);
+      var material = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
+      var plane = new THREE.Mesh(geometry, material);
+      plane.position.set(-2, height / 2 - 0.5, 0);
+      scene.add(plane);
       let historyIndex = -1;
       const history = [];
       // scene.add(head);
