@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import React from "react";
+import Character from "./characteranimation";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 // import { OrbitControls } from "./jsm/controls/OrbitControls.js";
@@ -73,26 +74,27 @@ export default () => {
     });
 
     //models
-    // var objLoader = new OBJLoader();
+    var objLoader = new OBJLoader();
 
-    // objLoader.setPath("models/obj/walt/");
-    // objLoader.load("WaltHead.obj", function(object) {
-    //   var head = object.children[0];
+    objLoader.setPath("https://threejs.org/examples/models/obj/walt/");
+    objLoader.load("WaltHead.obj", function(object) {
+      var head = object.children[0];
 
-    //   head.scale.multiplyScalar(15);
-    //   head.position.y = -500;
-    //   head.material = cubeMaterial1;
+      head.scale.multiplyScalar(15);
+      head.position.y = -500;
+      head.material = cubeMaterial1;
 
-    //   var head2 = head.clone();
-    //   head2.position.x = -900;
-    //   head2.material = cubeMaterial2;
+      var head2 = head.clone();
+      head2.position.x = -900;
+      head2.material = cubeMaterial2;
 
-    //   var head3 = head.clone();
-    //   head3.position.x = 900;
-    //   head3.material = cubeMaterial3;
+      var head3 = head.clone();
+      head3.position.x = 900;
+      head3.material = cubeMaterial3;
+      scene.add(head);
 
-    //   scene.add(head, head2, head3);
-    // });
+      scene.add(head, head2, head3);
+    });
 
     //renderer
     renderer = new THREE.WebGLRenderer();
@@ -112,6 +114,7 @@ export default () => {
     // container.appendChild(stats.dom);
 
     window.addEventListener("resize", onWindowResize, false);
+    //  Character(scene,renderer,camera)
   }
 
   function onWindowResize() {
