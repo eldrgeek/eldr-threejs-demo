@@ -92,7 +92,9 @@ export default () => {
       head3 = head.clone();
       head3.position.x = 900;
       head3.material = cubeMaterial3;
-      scene.add(head);
+      let historyIndex = -1;
+      const history = [];
+      // scene.add(head);
       window.addEventListener("keydown", function(event) {
         switch (event.keyCode) {
           case 87: // W
@@ -105,13 +107,37 @@ export default () => {
           case 82: // R
             control.setMode("scale");
             break;
+          case 190: // .
+            history.push(head3.matrix);
+            historyIndex = history.length;
+            console.log("dot", historyIndex, history);
+            break;
+          case 37: // left arrow
+            if (historyIndex >= 0) {
+              console.log("left");
+              historyIndex--;
+              head3.applyMatrix4(history[historyIndex]);
+              render();
+            }
+            break;
+          case 39: // right arrow
+            if (historyIndex < history.length) {
+              console.log("right");
+
+              head3.applyMatrix4(history[historyIndex]);
+              historyIndex++;
+            }
+            break;
           default:
             break;
         }
       });
       scene.add(/* head, head2,*/ head3);
       var control = new TransformControls(camera, renderer.domElement);
-      control.addEventListener("change", render);
+      control.addEventListener("change", () => {
+        render();
+        console.log("pos", head3.position);
+      });
 
       control.attach(head3);
       scene.add(control);
