@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import Vimeo from "@vimeo/player"
 import React from "react";
 import Character from "./characteranimation";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -17,9 +16,14 @@ export default () => {
   animate();
 
   function init() {
-    container = document.createElement("div");
-    document.body.appendChild(container);
+    container = document.getElementById("sanders");
 
+    if (!container) {
+      container = document.createElement("div");
+
+      container.setAttribute("id", "sanders");
+      document.body.appendChild(container);
+    }
     camera = new THREE.PerspectiveCamera(
       50,
       window.innerWidth / window.innerHeight,
@@ -93,16 +97,15 @@ export default () => {
       head3 = head.clone();
       head3.position.x = 900;
       head3.material = cubeMaterial3;
-      var screenScaler = 10;
-      // var height = screenScaler * (vimeoPlayer.getHeight() / vimeoPlayer.getWidth())
-      
-      var height = 100
-      var geometry = new THREE.PlaneGeometry(screenScaler, height, 1);
-      var material = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
-      var plane = new THREE.Mesh(geometry, material);
-      plane.position.set(-2, height / 2 - 0.5, 0);
-      scene.add(plane);
       let historyIndex = -1;
+      var geo = new THREE.PlaneBufferGeometry(20, 20, 8, 8);
+      var mat = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        side: THREE.DoubleSide
+      });
+      var plane = new THREE.Mesh(geo, mat);
+      // plane.position.x =
+      scene.add(plane);
       const history = [];
       // scene.add(head);
       window.addEventListener("keydown", function(event) {
@@ -157,10 +160,16 @@ export default () => {
     });
 
     //renderer
-    renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
+    if (!window.saveRenderer) {
+      renderer = new THREE.WebGLRenderer();
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (!container.firstChild) container.appendChild(renderer.domElement);
+      window.saveRenderer = renderer;
+    } else {
+      renderer = window.saveRenderer;
+    }
 
     //controls
     var controls = new OrbitControls(camera, renderer.domElement);
