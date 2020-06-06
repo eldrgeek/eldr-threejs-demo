@@ -6,9 +6,9 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 //https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_transform.html
 export default () => {
-  var container, stats;
+  var container, stats, plane, mesh;
 
-  var camera, scene, renderer;
+  var camera, scene, renderer, head3, control;
 
   var pointLight;
 
@@ -77,35 +77,74 @@ export default () => {
       color: 0xffffff,
       envMap: reflectionCube
     });
+    var transparentMaterial = new THREE.MeshBasicMaterial({
+      // color: 0xffffff,
+      // envMap: reflectionCube,
+      opacity: 0.0
+    });
 
     //models
     var objLoader = new OBJLoader();
 
     objLoader.setPath("https://threejs.org/examples/models/obj/walt/");
-    var head3;
     objLoader.load("WaltHead.obj", function(object) {
       var head = object.children[0];
 
-      head.scale.multiplyScalar(5);
-      head.position.y = -500;
+      head.scale.multiplyScalar(4);
+      head.position.y = -100;
       head.material = cubeMaterial1;
 
-      var head2 = head.clone();
-      head2.position.x = -900;
-      head2.material = cubeMaterial2;
+      // var head2 = head.clone();
+      // head2.position.x = -900;
+      // head2.material = cubeMaterial2;
 
-      head3 = head.clone();
-      head3.position.x = 900;
+      // head3 = head.clone();
+      head3 = head;
+      head3.position.x = 500;
+      head3.position.z = 1000;
+      head3.rotateY(Math.PI);
       head3.material = cubeMaterial3;
       let historyIndex = -1;
-      var geo = new THREE.PlaneBufferGeometry(20, 20, 8, 8);
+      var geo = new THREE.PlaneBufferGeometry(100, 100, 8, 8);
       var mat = new THREE.MeshBasicMaterial({
         color: 0x000000,
         side: THREE.DoubleSide
       });
-      var plane = new THREE.Mesh(geo, mat);
-      // plane.position.x =
-      scene.add(plane);
+      plane = new THREE.Mesh(geo, mat);
+      plane.rotateY(Math.PI / 2);
+      const makeBox = () => {
+        const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
+
+        // create a default (white) Basic material
+        const material = new THREE.MeshBasicMaterial();
+
+        // create a Mesh containing the geometry and material
+        mesh = new THREE.Mesh(geometry, material);
+        // mesh.position.set(0, 0, 10);
+        // control.add(mesh);
+        // // add the mesh to the scene
+        // // control.attach(mesh)
+        // scene.add(mesh);
+      };
+      scene.add(/* head, head2,*/ head3);
+      var planeHolder = head3.clone();
+      planeHolder.position.x = 100;
+      planeHolder.rotateY(Math.PI / 2);
+      planeHolder.material = transparentMaterial;
+      planeHolder.material.transparent = true;
+      planeHolder.scale.multiplyScalar(1);
+      planeHolder.add(plane);
+      scene.add(planeHolder);
+      // scene.add(plane)
+
+      makeBox();
+      // control.attach(head3);
+      // scene.add(control);
+      // makeBox();
+      // plane = new THREE.Mesh(geo, mat);
+      // plane.position.x = 900;
+      // plane.position.y = -500;
+      // scene.add(plane);
       const history = [];
       // scene.add(head);
       window.addEventListener("keydown", function(event) {
@@ -148,15 +187,6 @@ export default () => {
             break;
         }
       });
-      scene.add(/* head, head2,*/ head3);
-      var control = new TransformControls(camera, renderer.domElement);
-      control.addEventListener("change", () => {
-        render();
-        console.log("pos", head3.position);
-      });
-
-      control.attach(head3);
-      scene.add(control);
     });
 
     //renderer
@@ -170,7 +200,10 @@ export default () => {
     } else {
       renderer = window.saveRenderer;
     }
-
+    control = new TransformControls(camera, renderer.domElement);
+    control.addEventListener("change", () => {
+      render();
+    });
     //controls
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;
@@ -192,9 +225,17 @@ export default () => {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
-
+  // if (window.theInterval) clearInterval(window.theInterval);
+  // window.theInterval = setInterval(() => {
+  //   // console.clear()
+  //   // console.log("campos", camera.position);
+  //   // console.log("planepos", plane.position);
+  //   console.log("headpos", head3.parent);
+  //   console.log("meshpos", mesh.parent);
+  // }, 5000);
   function animate() {
     requestAnimationFrame(animate);
+
     render();
   }
 
