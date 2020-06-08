@@ -5,6 +5,7 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 //https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_transform.html
 import makeImage from "./makeImage";
 import makeVideo from "./makeVideo";
+console.log("ThreeJSCUbe");
 export default () => {
   var container, stats, plane, mesh;
 
@@ -125,7 +126,7 @@ export default () => {
       };
       scene.add(/* head, head2,*/ head3);
       const image = makeImage(scene, head3);
-      // const video = makeVideo(scene);
+      const video = makeVideo(scene);
       var planeHolder = head3.clone();
       planeHolder.position.y = 800;
       planeHolder.position.x = 300;

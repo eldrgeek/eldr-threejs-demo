@@ -9,7 +9,8 @@ var transparentMaterial = new THREE.MeshBasicMaterial({
 });
 export default (makeImage = (scene, head3) => {
   const planeText = new THREE.MeshBasicMaterial({
-    map: loader.load("./mike.png")
+    map: loader.load("./mike.png"),
+    side: THREE.DoubleSide
   });
 
   const plane = new THREE.Mesh(planeGeometry, planeText);

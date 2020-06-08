@@ -19,7 +19,8 @@ export default scene => {
     const dim = 100;
     var geometry = new THREE.PlaneBufferGeometry(dim, dim);
     var material = new THREE.MeshBasicMaterial({
-      map: videoTexture
+      map: videoTexture,
+      side: THREE.DoubleSide
     });
     var mesh = new THREE.Mesh(geometry, material);
     mesh.position.x = 100;
