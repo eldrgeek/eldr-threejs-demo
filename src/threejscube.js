@@ -29,7 +29,7 @@ export default () => {
       1,
       5000
     );
-    camera.position.z = -100;
+    camera.position.z = -1;
 
     //cubemap
     var path = "https://threejs.org/examples/textures/cube/SwedishRoyalCastle/";
@@ -124,18 +124,17 @@ export default () => {
         // scene.add(mesh);
       };
       scene.add(/* head, head2,*/ head3);
-      const image = makeImage(scene);
-      const video = makeVideo(scene);
+      const image = makeImage(scene, head3);
+      // const video = makeVideo(scene);
       var planeHolder = head3.clone();
-      planeHolder.position.x = 100;
-      planeHolder.position.y = 100;
-      planeHolder.position.x = 100;
+      planeHolder.position.y = 800;
+      planeHolder.position.x = 300;
       // planeHolder.rotateY(Math.PI / 2);
       planeHolder.material = transparentMaterial;
       planeHolder.material.transparent = true;
       planeHolder.scale.multiplyScalar(1);
-      planeHolder.add(image);
-      scene.add(planeHolder);
+      // planeHolder.add(image);
+      // scene.add(planeHolder);
       // var plane1 = plane.clone();
       // // var video = document.getElementById("vid1");
 
