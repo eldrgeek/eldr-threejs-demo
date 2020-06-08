@@ -11,7 +11,12 @@ import makeVideo from "./makeVideo";
 export default () => {
   var container, plane;
 
-  var camera, scene, renderer, control;
+  var camera,
+    scene,
+    renderer,
+    control,
+    objects = [],
+    objectsIndex = 0;
 
   var pointLight;
 
@@ -71,11 +76,6 @@ export default () => {
       reflectivity: 0.3
     });
 
-    var cubeMaterial1 = new THREE.MeshLambertMaterial({
-      color: 0xffffff,
-      envMap: reflectionCube
-    });
-
     //models
     var objLoader = new OBJLoader();
 
@@ -90,7 +90,6 @@ export default () => {
       head.position.z = 1000;
       head.rotateY(Math.PI);
       head.material = cubeMaterial3;
-      let historyIndex = -1;
       var geo = new THREE.PlaneBufferGeometry(100, 100, 8, 8);
       var mat = new THREE.MeshBasicMaterial({
         color: 0x000000,
@@ -99,14 +98,14 @@ export default () => {
       plane = new THREE.Mesh(geo, mat);
       plane.rotateY(Math.PI / 2);
 
-      scene.add(/* head, head2,*/ head);
+      scene.add(head);
 
       control.attach(head);
       scene.add(control);
-
-      const history = [];
+      objects.push(head);
       // scene.add(head);
       window.addEventListener("keydown", function(event) {
+        console.log("key", event.keyCode);
         switch (event.keyCode) {
           case 87: // W
             control.setMode("translate");
@@ -118,19 +117,27 @@ export default () => {
           case 82: // R
             control.setMode("scale");
             break;
+          case 83: // S
+            objectsIndex++;
+            if (objectsIndex >= objects.length) objectsIndex = 0;
+            control.attach(objects[objectsIndex]);
+            break;
           case 190: // .
-            history.push(head.matrix);
-            historyIndex = history.length;
-            console.log("dot", historyIndex, history);
+            let r = objects[objectsIndex].rotation;
+            const inRadians = n => Math.round(n / Math.PI);
+            console.log(
+              "dot",
+              objects[objectsIndex].position,
+              "xR",
+              inRadians(r._x),
+              "yR",
+              inRadians(r._y),
+              "zR",
+              inRadians(r._z)
+            );
             break;
           case 37: // left arrow
             head.position.y -= 10;
-            // if (historyIndex >= 0) {
-            //   console.log("left");
-            //   historyIndex--;
-            //   head.matrix.y = (history[historyIndex].y);
-            //   render();
-            // }
             break;
           case 39: // right arrow
             //  head.translateY(10)
@@ -141,8 +148,8 @@ export default () => {
             break;
         }
       });
-      const image = makeImage(scene, head.clone());
-      const video = makeVideo(scene);
+      makeImage(scene, objects);
+      makeVideo(scene, objects);
     });
     //renderer
     if (!window.saveRenderer) {
@@ -189,9 +196,12 @@ export default () => {
   //   console.log("meshpos", mesh.parent);
   // }, 5000);
   function animate() {
+    try {
+      render();
+    } catch (e) {
+      console.log("error");
+    }
     requestAnimationFrame(animate);
-
-    render();
   }
 
   function render() {

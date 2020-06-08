@@ -1,5 +1,5 @@
 import * as THREE from "three";
-export default scene => {
+export default (scene, objects) => {
   navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
     // const videoSettings = stream.getVideoTracks()[0].getSettings();
     let video = document.createElement("video");
@@ -22,17 +22,18 @@ export default scene => {
       map: videoTexture,
       side: THREE.DoubleSide
     });
-    var mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x = 100;
+    var videoPane = new THREE.Mesh(geometry, material);
+    videoPane.position.x = 100;
 
-    mesh.rotateY(Math.PI);
+    videoPane.rotateY(Math.PI);
 
     // holder.position.z = 100
     const holder = new THREE.Object3D();
     holder.position.x = 200;
     holder.position.z = 300;
-    holder.add(mesh);
+    holder.add(videoPane);
     scene.add(holder);
+    objects.push(holder);
   });
   return;
 };

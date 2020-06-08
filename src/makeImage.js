@@ -3,7 +3,7 @@ const loader = new THREE.TextureLoader();
 const dimension = 100;
 const planeGeometry = new THREE.PlaneBufferGeometry(dimension / 2, dimension);
 
-export default scene => {
+export default (scene, objects) => {
   const planeText = new THREE.MeshBasicMaterial({
     map: loader.load("./mike.png"),
     side: THREE.DoubleSide
@@ -20,4 +20,5 @@ export default scene => {
   // plane.rotateY(Math.PI);
   holder.add(plane);
   scene.add(holder);
+  objects.push(holder);
 };
