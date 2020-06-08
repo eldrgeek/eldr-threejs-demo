@@ -3,6 +3,8 @@ import React from "react";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 //https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_transform.html
+import makeImage from "./makeImage";
+import makeVideo from "./makeVideo";
 export default () => {
   var container, stats, plane, mesh;
 
@@ -97,11 +99,14 @@ export default () => {
       head3.position.z = 1000;
       head3.rotateY(Math.PI);
       head3.material = cubeMaterial3;
-      var geo = new THREE.PlaneBufferGeometry(100, 100, 8, 8);
+      var geo = new THREE.PlaneGeometry(100, 100, 8, 8);
       var mat = new THREE.MeshBasicMaterial({
         color: 0x000000,
         side: THREE.DoubleSide
       });
+      let texture1 = new THREE.TextureLoader().load("./mike.jpg");
+      // mat = new THREE.MeshLambertMaterial( { map: texture1 } );
+
       plane = new THREE.Mesh(geo, mat);
       plane.rotateY(Math.PI / 2);
       const makeBox = () => {
@@ -119,19 +124,29 @@ export default () => {
         // scene.add(mesh);
       };
       scene.add(/* head, head2,*/ head3);
+      const image = makeImage(scene);
       var planeHolder = head3.clone();
       planeHolder.position.x = 100;
       planeHolder.position.y = 100;
       planeHolder.position.x = 100;
-      planeHolder.rotateY(Math.PI / 2);
+      // planeHolder.rotateY(Math.PI / 2);
       planeHolder.material = transparentMaterial;
       planeHolder.material.transparent = true;
       planeHolder.scale.multiplyScalar(1);
-      planeHolder.add(plane);
+      planeHolder.add(image);
       scene.add(planeHolder);
-      var plane1 = plane.clone();
-      plane1.scale.multiplyScalar(0.25);
-      scene.add(plane1);
+      // var plane1 = plane.clone();
+      // // var video = document.getElementById("vid1");
+
+      // // var texture = new THREE.VideoTexture(video);
+      // // texture.minFilter = THREE.LinearFilter;
+      // // texture.magFilter = THREE.LinearFilter;
+      // // texture.format = THREE.RGBFormat;
+      // plane.material.map = texture;
+      // plane.material.needsUpdate = true;
+      // e.material.needsUpdate = true;
+      // plane1.scale.multiplyScalar(0.25);
+      // scene.add(plane1);
       // scene.add(plane)
 
       makeBox();

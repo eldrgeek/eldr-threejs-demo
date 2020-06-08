@@ -6,6 +6,8 @@ export default function App() {
   return (
     <div className="App">
       <Demo1 />
+      {/*  {/* <video style={{width: 200}} id='vid1' autoPlay src="./mike.mp4" /> */}{" "}
+      */}
     </div>
   );
 }
