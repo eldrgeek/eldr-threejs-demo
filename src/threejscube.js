@@ -2,14 +2,16 @@ import * as THREE from "three";
 import React from "react";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 //https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_transform.html
+
 import makeImage from "./makeImage";
 import makeVideo from "./makeVideo";
-console.log("ThreeJSCUbe");
-export default () => {
-  var container, stats, plane, mesh;
 
-  var camera, scene, renderer, head3, control;
+export default () => {
+  var container, plane;
+
+  var camera, scene, renderer, control;
 
   var pointLight;
 
@@ -18,9 +20,9 @@ export default () => {
 
   function init() {
     container = document.getElementById("sanders");
+
     if (!container) {
       container = document.createElement("div");
-
       container.setAttribute("id", "sanders");
       document.body.appendChild(container);
     }
@@ -73,11 +75,6 @@ export default () => {
       color: 0xffffff,
       envMap: reflectionCube
     });
-    var transparentMaterial = new THREE.MeshBasicMaterial({
-      // color: 0xffffff,
-      // envMap: reflectionCube,
-      opacity: 0.0
-    });
 
     //models
     var objLoader = new OBJLoader();
@@ -88,71 +85,65 @@ export default () => {
 
       head.scale.multiplyScalar(4);
       head.position.y = -100;
-      head.material = cubeMaterial1;
 
-      // var head2 = head.clone();
-      // head2.position.x = -900;
-      // head2.material = cubeMaterial2;
-
-      // head3 = head.clone();
-      head3 = head;
-      head3.position.x = 500;
-      head3.position.z = 1000;
-      head3.rotateY(Math.PI);
-      head3.material = cubeMaterial3;
-      var geo = new THREE.PlaneGeometry(100, 100, 8, 8);
+      head.position.x = 100;
+      head.position.z = 1000;
+      head.rotateY(Math.PI);
+      head.material = cubeMaterial3;
+      let historyIndex = -1;
+      var geo = new THREE.PlaneBufferGeometry(100, 100, 8, 8);
       var mat = new THREE.MeshBasicMaterial({
         color: 0x000000,
         side: THREE.DoubleSide
       });
-      let texture1 = new THREE.TextureLoader().load("./mike.jpg");
-      // mat = new THREE.MeshLambertMaterial( { map: texture1 } );
-
       plane = new THREE.Mesh(geo, mat);
       plane.rotateY(Math.PI / 2);
-      const makeBox = () => {
-        const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
 
-        // create a default (white) Basic material
-        const material = new THREE.MeshBasicMaterial();
+      scene.add(/* head, head2,*/ head);
 
-        // create a Mesh containing the geometry and material
-        mesh = new THREE.Mesh(geometry, material);
-        // mesh.position.set(0, 0, 10);
-        // control.add(mesh);
-        // // add the mesh to the scene
-        // // control.attach(mesh)
-        // scene.add(mesh);
-      };
-      scene.add(/* head, head2,*/ head3);
-      const image = makeImage(scene, head3);
+      control.attach(head);
+      scene.add(control);
+
+      const history = [];
+      // scene.add(head);
+      window.addEventListener("keydown", function(event) {
+        switch (event.keyCode) {
+          case 87: // W
+            control.setMode("translate");
+            break;
+          case 69: // E
+            control.setMode("rotate");
+            console.log("Rotate");
+            break;
+          case 82: // R
+            control.setMode("scale");
+            break;
+          case 190: // .
+            history.push(head.matrix);
+            historyIndex = history.length;
+            console.log("dot", historyIndex, history);
+            break;
+          case 37: // left arrow
+            head.position.y -= 10;
+            // if (historyIndex >= 0) {
+            //   console.log("left");
+            //   historyIndex--;
+            //   head.matrix.y = (history[historyIndex].y);
+            //   render();
+            // }
+            break;
+          case 39: // right arrow
+            //  head.translateY(10)
+            head.position.fromArray([900, -500, 700]);
+
+            break;
+          default:
+            break;
+        }
+      });
+      const image = makeImage(scene, head.clone());
       const video = makeVideo(scene);
-      var planeHolder = head3.clone();
-      planeHolder.position.y = 800;
-      planeHolder.position.x = 300;
-      // planeHolder.rotateY(Math.PI / 2);
-      planeHolder.material = transparentMaterial;
-      planeHolder.material.transparent = true;
-      planeHolder.scale.multiplyScalar(1);
-      // planeHolder.add(image);
-      // scene.add(planeHolder);
-      // var plane1 = plane.clone();
-      // // var video = document.getElementById("vid1");
-
-      // // var texture = new THREE.VideoTexture(video);
-      // // texture.minFilter = THREE.LinearFilter;
-      // // texture.magFilter = THREE.LinearFilter;
-      // // texture.format = THREE.RGBFormat;
-      // plane.material.map = texture;
-      // plane.material.needsUpdate = true;
-      // e.material.needsUpdate = true;
-      // plane1.scale.multiplyScalar(0.25);
-      // scene.add(plane1);
-      // scene.add(plane)
-
-      makeBox();
     });
-
     //renderer
     if (!window.saveRenderer) {
       renderer = new THREE.WebGLRenderer();
@@ -164,13 +155,20 @@ export default () => {
     } else {
       renderer = window.saveRenderer;
     }
-
+    control = new TransformControls(camera, renderer.domElement);
+    control.addEventListener("change", () => {
+      render();
+    });
     //controls
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;
     controls.enablePan = false;
     controls.minPolarAngle = Math.PI / 4;
     controls.maxPolarAngle = Math.PI / 1.5;
+
+    //stats
+    // stats = new Stats();
+    // container.appendChild(stats.dom);
 
     window.addEventListener("resize", onWindowResize, false);
     //  Character(scene,renderer,camera)
@@ -182,7 +180,14 @@ export default () => {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
-
+  // if (window.theInterval) clearInterval(window.theInterval);
+  // window.theInterval = setInterval(() => {
+  //   // console.clear()
+  //   // console.log("campos", camera.position);
+  //   // console.log("planepos", plane.position);
+  //   console.log("headpos", head.parent);
+  //   console.log("meshpos", mesh.parent);
+  // }, 5000);
   function animate() {
     requestAnimationFrame(animate);
 
