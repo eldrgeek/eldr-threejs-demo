@@ -125,6 +125,7 @@ export default () => {
       };
       scene.add(/* head, head2,*/ head3);
       const image = makeImage(scene);
+      const video = makeVideo(scene);
       var planeHolder = head3.clone();
       planeHolder.position.x = 100;
       planeHolder.position.y = 100;
