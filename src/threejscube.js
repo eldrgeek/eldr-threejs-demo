@@ -4,7 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 //https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_transform.html
-
+import Background from "./Background";
 import makeImage from "./makeImage";
 import makeVideo from "./makeVideo";
 
@@ -52,14 +52,9 @@ export default () => {
     ];
 
     path = "./";
-    urls = [0, 1, 2, 3, 4, 5].map(n => `./3072_${n}.jpg`);
-
-    var reflectionCube = new THREE.CubeTextureLoader().load(urls);
-    var refractionCube = new THREE.CubeTextureLoader().load(urls);
-    refractionCube.mapping = THREE.CubeRefractionMapping;
 
     scene = new THREE.Scene();
-    scene.background = reflectionCube;
+    Background(scene);
 
     //lights
     var ambient = new THREE.AmbientLight(0xffffff);
@@ -71,8 +66,6 @@ export default () => {
     //materials
     var cubeMaterial3 = new THREE.MeshLambertMaterial({
       color: 0x555555,
-      envMap: reflectionCube,
-      combine: THREE.MixOperation,
       reflectivity: 0.3
     });
 
@@ -98,11 +91,7 @@ export default () => {
       plane = new THREE.Mesh(geo, mat);
       plane.rotateY(Math.PI / 2);
 
-      scene.add(head);
-
-      control.attach(head);
-      scene.add(control);
-      objects.push(head);
+      let imageCount = 10;
       // scene.add(head);
       window.addEventListener("keydown", function(event) {
         console.log("key", event.keyCode);
@@ -129,6 +118,7 @@ export default () => {
               "dot",
               objects[objectsIndex].position,
               "xR",
+              r,
               inRadians(r._x),
               "yR",
               inRadians(r._y),
@@ -139,6 +129,10 @@ export default () => {
           case 37: // left arrow
             head.position.y -= 10;
             break;
+          case 187: // +
+            imageCount++;
+            console.log(imageCount);
+            break;
           case 39: // right arrow
             //  head.translateY(10)
             head.position.fromArray([900, -500, 700]);
@@ -148,8 +142,42 @@ export default () => {
             break;
         }
       });
-      makeImage(scene, objects);
-      makeVideo(scene, objects);
+      if (imageCount >= 0) {
+        scene.add(head);
+
+        control.attach(head);
+        scene.add(control);
+        objects.push(head);
+      }
+
+      if (imageCount > 2)
+        makeImage(
+          scene,
+          objects,
+          "./mike.png",
+          { x: 162, y: 0, z: 300 },
+          -Math.PI * 0.8
+        );
+      if (imageCount > 0)
+        makeImage(
+          scene,
+          objects,
+          "./paddy.png",
+          { x: 408, y: 0, z: 127 },
+          -Math.PI * 0.5
+        );
+      if (imageCount > 1)
+        makeImage(scene, objects, "./michael.png", { x: 70, y: 19, z: 240 });
+      if (imageCount > 3)
+        makeImage(
+          scene,
+          objects,
+          "./kate.png",
+          { x: 231, y: 0, z: 23 },
+          -Math.PI * 0.5
+        );
+
+      if (imageCount > 4) makeVideo(scene, objects);
     });
     //renderer
     if (!window.saveRenderer) {

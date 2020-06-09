@@ -23,14 +23,14 @@ export default (scene, objects) => {
       side: THREE.DoubleSide
     });
     var videoPane = new THREE.Mesh(geometry, material);
-    videoPane.position.x = 100;
 
     videoPane.rotateY(Math.PI);
 
     // holder.position.z = 100
     const holder = new THREE.Object3D();
-    holder.position.x = 200;
-    holder.position.z = 300;
+    videoPane.position.x = 8;
+    holder.position.y = 0;
+    holder.position.z = -239;
     holder.add(videoPane);
     scene.add(holder);
     objects.push(holder);
