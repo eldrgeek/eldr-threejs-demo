@@ -147,6 +147,10 @@ export default () => {
         imageCount++;
         createFigures();
       });
+      window.addEventListener("touchstart", () => {
+        imageCount++;
+        createFigures();
+      });
 
       const createFigures = () => {
         if (imageCount === 0) {
@@ -210,8 +214,8 @@ export default () => {
     controls.minPolarAngle = Math.PI / 4;
     controls.maxPolarAngle = Math.PI / 1.5;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.5;
-    window.addEventListener("click", () => (controls.autoRotate = false));
+    controls.autoRotateSpeed = -0.5;
+    // window.addEventListener("click", () => (controls.autoRotate = false));
 
     //stats
     // stats = new Stats();
