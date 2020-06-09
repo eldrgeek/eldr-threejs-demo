@@ -9,7 +9,7 @@ import makeImage from "./makeImage";
 import makeVideo from "./makeVideo";
 
 export default () => {
-  var container, plane;
+  var container, plane, controls;
 
   var camera,
     scene,
@@ -91,10 +91,10 @@ export default () => {
       plane = new THREE.Mesh(geo, mat);
       plane.rotateY(Math.PI / 2);
 
-      let imageCount = 10;
       // scene.add(head);
       window.addEventListener("keydown", function(event) {
         console.log("key", event.keyCode);
+        controls.autoRotate = false;
         switch (event.keyCode) {
           case 87: // W
             control.setMode("translate");
@@ -131,7 +131,7 @@ export default () => {
             break;
           case 187: // +
             imageCount++;
-            console.log(imageCount);
+            createFigures();
             break;
           case 39: // right arrow
             //  head.translateY(10)
@@ -142,42 +142,51 @@ export default () => {
             break;
         }
       });
-      if (imageCount >= 0) {
-        scene.add(head);
+      let imageCount = -2;
+      window.addEventListener("click", () => {
+        imageCount++;
+        createFigures();
+      });
 
-        control.attach(head);
-        scene.add(control);
-        objects.push(head);
-      }
+      const createFigures = () => {
+        if (imageCount === 0) {
+          scene.add(head);
 
-      if (imageCount > 2)
-        makeImage(
-          scene,
-          objects,
-          "./mike.png",
-          { x: 162, y: 0, z: 300 },
-          -Math.PI * 0.8
-        );
-      if (imageCount > 0)
-        makeImage(
-          scene,
-          objects,
-          "./paddy.png",
-          { x: 408, y: 0, z: 127 },
-          -Math.PI * 0.5
-        );
-      if (imageCount > 1)
-        makeImage(scene, objects, "./michael.png", { x: 70, y: 19, z: 240 });
-      if (imageCount > 3)
-        makeImage(
-          scene,
-          objects,
-          "./kate.png",
-          { x: 231, y: 0, z: 23 },
-          -Math.PI * 0.5
-        );
+          control.attach(head);
+          scene.add(control);
+          objects.push(head);
+        }
 
-      if (imageCount > 4) makeVideo(scene, objects);
+        if (imageCount === 2)
+          makeImage(
+            scene,
+            objects,
+            "./mike.png",
+            { x: 162, y: 0, z: 300 },
+            -Math.PI * 0.8
+          );
+        if (imageCount === 1)
+          makeImage(
+            scene,
+            objects,
+            "./paddy.png",
+            { x: 408, y: 0, z: 127 },
+            -Math.PI * 0.5
+          );
+        if (imageCount === 3)
+          makeImage(scene, objects, "./michael.png", { x: 70, y: 19, z: 240 });
+        if (imageCount === 4)
+          makeImage(
+            scene,
+            objects,
+            "./kate.png",
+            { x: 231, y: 0, z: 23 },
+            -Math.PI * 0.5
+          );
+
+        if (imageCount === 5) makeVideo(scene, objects);
+        render();
+      };
     });
     //renderer
     if (!window.saveRenderer) {
@@ -195,11 +204,14 @@ export default () => {
       render();
     });
     //controls
-    var controls = new OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;
     controls.enablePan = false;
     controls.minPolarAngle = Math.PI / 4;
     controls.maxPolarAngle = Math.PI / 1.5;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    window.addEventListener("click", () => (controls.autoRotate = false));
 
     //stats
     // stats = new Stats();
@@ -226,14 +238,16 @@ export default () => {
   function animate() {
     try {
       render();
+      requestAnimationFrame(animate);
     } catch (e) {
       console.log("error");
     }
-    requestAnimationFrame(animate);
   }
 
   function render() {
     renderer.render(scene, camera);
+    controls.update();
+
     // stats.update();
   }
   return <div>Cubedemo</div>;
